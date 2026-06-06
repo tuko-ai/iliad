@@ -29,6 +29,15 @@ export default function VideoPromptBuilder() {
   const set = (field: string, value: string) =>
     updateVideoData({ [field]: value } as never)
 
+  const autoFillFromStoryboard = () => {
+    if (!videoData.styleDescription && storyboardData.styleLocks) {
+      updateVideoData({ styleDescription: storyboardData.styleLocks })
+    }
+    if (!videoData.emotionalGuidance && storyboardData.emotionalArc) {
+      updateVideoData({ emotionalGuidance: storyboardData.emotionalArc })
+    }
+  }
+
   const buildStoryboardContext = () => {
     if (!hasStoryboard) return ''
     const pad = (n: number) => String(n).padStart(2, '0')
@@ -104,12 +113,34 @@ export default function VideoPromptBuilder() {
               border: '1px solid var(--color-gold-dim)',
               borderRadius: '4px',
               marginBottom: '1.25rem',
-              fontSize: '0.72rem',
-              color: 'var(--color-gold)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '0.5rem',
             }}
           >
-            ◈ Auto-assembling from Module 03: <strong>{storyboardData.projectTitle}</strong>
-            {' '}({storyboardData.panelCount} panels)
+            <span style={{ fontSize: '0.72rem', color: 'var(--color-gold)' }}>
+              ◈ Auto-assembling from Module 03: <strong>{storyboardData.projectTitle}</strong>
+              {' '}({storyboardData.panelCount} panels)
+            </span>
+            <button
+              onClick={autoFillFromStoryboard}
+              style={{
+                padding: '0.25rem 0.6rem',
+                background: 'var(--color-gold)',
+                border: 'none',
+                borderRadius: '3px',
+                color: '#0a0a0a',
+                fontWeight: 700,
+                fontSize: '0.65rem',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              AUTO-FILL ↓
+            </button>
           </div>
         ) : (
           <div

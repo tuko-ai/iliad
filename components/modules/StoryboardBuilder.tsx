@@ -4,7 +4,7 @@ import { useStore } from '@/lib/store'
 import { FormField, Input, Textarea, Select, RadioGroup } from '@/components/FormField'
 import { PromptResult } from '@/components/PromptResult'
 import { ImageUpload } from '@/components/ImageUpload'
-import type { StoryboardFormat } from '@/lib/types'
+import type { StoryboardFormat, StoryboardData } from '@/lib/types'
 
 const PANEL_COUNTS = [
   { value: '10', label: '10' },
@@ -35,8 +35,33 @@ export default function StoryboardBuilder() {
   const hasCharacterName = !!characterSheetData.characterName
 
   const autoFillCharacters = () => {
-    if (hasCharacterName) updateStoryboardData({ characterSlotA: `${characterSheetData.characterName} — ${characterSheetData.coreMood || characterData.mood}` })
-    else if (hasCharacterA) updateStoryboardData({ characterSlotA: characterData.subjectDescription.slice(0, 80) })
+    const updates: Partial<StoryboardData> = {}
+
+    // Build character slot A — include visual appearance for storyboard consistency
+    if (hasCharacterName) {
+      const visual = characterSheetData.visualSignature || characterData.subjectDescription
+      const mood = characterSheetData.coreMood || characterData.mood
+      updates.characterSlotA = [characterSheetData.characterName, visual, mood].filter(Boolean).join(' — ')
+    } else if (hasCharacterA) {
+      updates.characterSlotA = [characterData.subjectDescription.slice(0, 100), characterData.mood].filter(Boolean).join(' — ')
+    }
+
+    // Populate style locks from technical style if not already set
+    if (!storyboardData.styleLocks && characterData.technicalStyle) {
+      const styleMap: Record<string, string> = {
+        'kodak-portra': 'Kodak Portra 800, film grain, natural color palette',
+        'anime': 'Anime style, clean linework, cel-look lighting',
+        'cel': 'Cel-shaded, flat color fills, strong outlines',
+      }
+      updates.styleLocks = styleMap[characterData.technicalStyle] ?? characterData.technicalStyle
+    }
+
+    // Populate environment from character setting if not already set
+    if (!storyboardData.environmentReference && characterData.setting) {
+      updates.environmentReference = characterData.setting
+    }
+
+    updateStoryboardData(updates)
   }
 
   const handlePanelCountChange = (v: string) => {
