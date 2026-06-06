@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useStore } from '@/lib/store'
 import { FormField, Input, Textarea, Select, RadioGroup } from '@/components/FormField'
 import { PromptResult } from '@/components/PromptResult'
+import { CharacterBibleImport } from '@/components/CharacterBibleImport'
 import type { VisualStyle, TechnicalStyle } from '@/lib/types'
 
 const VISUAL_STYLES: { value: VisualStyle; label: string }[] = [
@@ -57,14 +58,17 @@ export default function CharacterBuilder() {
   return (
     <div className="module-enter" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', alignItems: 'start' }}>
       {/* Form */}
-      <div
-        style={{
-          background: 'var(--color-bg-card)',
-          border: '1px solid var(--color-border)',
-          borderRadius: '6px',
-          padding: '1.5rem',
-        }}
-      >
+      <div>
+        <CharacterBibleImport onApply={(fields) => updateCharacterData(fields as never)} />
+
+        <div
+          style={{
+            background: 'var(--color-bg-card)',
+            border: '1px solid var(--color-border)',
+            borderRadius: '6px',
+            padding: '1.5rem',
+          }}
+        >
         <SectionLabel>Character Description</SectionLabel>
 
         <FormField label="Subject Description" required>
@@ -144,6 +148,7 @@ export default function CharacterBuilder() {
         >
           {isGenerating ? '● GENERATING...' : '◈ GENERATE CHARACTER PROMPT'}
         </button>
+      </div>
       </div>
 
       {/* Result */}
