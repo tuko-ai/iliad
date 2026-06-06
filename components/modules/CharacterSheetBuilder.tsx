@@ -22,10 +22,16 @@ export default function CharacterSheetBuilder() {
     updateCharacterSheetData({ [field]: value } as never)
 
   const autoFill = () => {
+    const visualParts = [
+      characterData.subjectDescription,
+      characterData.wardrobe,
+      characterData.setting,
+    ].filter(Boolean)
+
     updateCharacterSheetData({
       coreMood: characterData.mood || characterSheetData.coreMood,
-      visualSignature: characterData.wardrobe
-        ? `${characterData.wardrobe}. ${characterData.setting}`
+      visualSignature: visualParts.length > 0
+        ? visualParts.join('. ')
         : characterSheetData.visualSignature,
     })
   }
