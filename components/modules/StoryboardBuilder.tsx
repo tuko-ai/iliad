@@ -4,6 +4,7 @@ import { useStore } from '@/lib/store'
 import { FormField, Input, Textarea, Select, RadioGroup } from '@/components/FormField'
 import { PromptResult } from '@/components/PromptResult'
 import { ImageUpload } from '@/components/ImageUpload'
+import { SceneImport } from '@/components/SceneImport'
 import type { StoryboardFormat, StoryboardData } from '@/lib/types'
 
 const PANEL_COUNTS = [
@@ -124,7 +125,9 @@ export default function StoryboardBuilder() {
       {/* Form */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
 
-        {/* Screenplay import */}
+        <SceneImport onApply={(fields) => updateStoryboardData(fields as never)} />
+
+        {/* Screenplay paste import */}
         <div
           style={{
             background: 'var(--color-bg-card)',
@@ -135,7 +138,7 @@ export default function StoryboardBuilder() {
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: showScreenplay ? '0.75rem' : 0 }}>
             <span style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--color-text-muted)' }}>
-              Import Screenplay / Shot List
+              Paste Screenplay / Shot List
             </span>
             <button
               onClick={() => setShowScreenplay(!showScreenplay)}
