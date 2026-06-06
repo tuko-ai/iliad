@@ -21,7 +21,9 @@
       "Bash(curl *)",
       "Bash(Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue)",
       "Bash(gh auth *)",
-      "PowerShell(git *)"
+      "PowerShell(git *)",
+      "Bash(Get-ChildItem -Recurse -Filter \"*CharacterSheet*\" C:\\\\projects\\\\iliad)",
+      "Bash(Select-Object FullName)"
     ]
   }
 }

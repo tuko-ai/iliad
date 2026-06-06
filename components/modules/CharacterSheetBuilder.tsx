@@ -4,7 +4,10 @@ import { useStore } from '@/lib/store'
 import { FormField, Input, Textarea, RadioGroup } from '@/components/FormField'
 import { PromptResult } from '@/components/PromptResult'
 import { ImageUpload } from '@/components/ImageUpload'
-import type { SheetStyle } from '@/lib/types'
+import { CharacterBibleImport } from '@/components/CharacterBibleImport'
+import type { SheetStyle, CharacterData } from '@/lib/types'
+
+type BibleFields = Partial<Pick<CharacterData, 'subjectDescription' | 'wardrobe' | 'mood' | 'setting' | 'visualStyle' | 'technicalStyle'>>
 
 const SHEET_STYLES: { value: SheetStyle; label: string }[] = [
   { value: 'identity-board', label: 'Identity Board' },
@@ -33,6 +36,14 @@ export default function CharacterSheetBuilder() {
       visualSignature: visualParts.length > 0
         ? visualParts.join('. ')
         : characterSheetData.visualSignature,
+    })
+  }
+
+  const handleBibleApply = (fields: BibleFields) => {
+    const visualParts = [fields.subjectDescription, fields.wardrobe, fields.setting].filter(Boolean)
+    updateCharacterSheetData({
+      ...(fields.mood ? { coreMood: fields.mood } : {}),
+      ...(visualParts.length > 0 ? { visualSignature: visualParts.join('. ') } : {}),
     })
   }
 
@@ -82,6 +93,8 @@ export default function CharacterSheetBuilder() {
           padding: '1.5rem',
         }}
       >
+        <CharacterBibleImport onApply={handleBibleApply} />
+
         {/* Auto-fill banner */}
         {hasCharacterData && (
           <div
