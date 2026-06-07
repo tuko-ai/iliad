@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { NextRequest } from 'next/server'
+import { logGeneration } from '@/lib/logger'
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -442,6 +443,7 @@ export async function POST(req: NextRequest) {
         messages: [{ role: 'user', content: buildUserMessage(body) }],
       })
       const text = message.content[0].type === 'text' ? message.content[0].text : '{}'
+      logGeneration(module, body, text)
       return new Response(text, { headers: { 'Content-Type': 'application/json' } })
     }
 
@@ -461,12 +463,15 @@ export async function POST(req: NextRequest) {
     const readable = new ReadableStream({
       async start(controller) {
         const encoder = new TextEncoder()
+        let full = ''
         for await (const event of stream) {
           if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+            full += event.delta.text
             controller.enqueue(encoder.encode(event.delta.text))
           }
         }
         controller.close()
+        logGeneration(module, body, full)
       },
     })
 
