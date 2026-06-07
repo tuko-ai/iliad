@@ -1,8 +1,17 @@
 'use client'
 import { useRef, useState } from 'react'
-import type { CharacterData, VisualStyle, TechnicalStyle } from '@/lib/types'
+import type { VisualStyle, TechnicalStyle } from '@/lib/types'
 
-type ParsedFields = Partial<Pick<CharacterData, 'subjectDescription' | 'wardrobe' | 'mood' | 'setting' | 'visualStyle' | 'technicalStyle'>>
+export type ParsedFields = {
+  characterName?: string
+  role?: string
+  subjectDescription?: string
+  wardrobe?: string
+  mood?: string
+  setting?: string
+  visualStyle?: VisualStyle
+  technicalStyle?: TechnicalStyle
+}
 type ParseState = 'idle' | 'parsing' | 'preview' | 'error'
 
 const VALID_VISUAL_STYLES: VisualStyle[] = ['photorealistic', 'anime-painterly', 'cel-shaded-3d', 'stylized-3d']
@@ -11,6 +20,8 @@ const VALID_TECHNICAL_STYLES: TechnicalStyle[] = ['kodak-portra', 'anime', 'cel'
 // ── Client-side keyword extractor ────────────────────────────────────────────
 
 const FIELD_KEYWORDS: Array<{ keys: string[]; field: keyof ParsedFields }> = [
+  { keys: ['character name', 'full name', 'name', 'hero', 'protagonist', 'character'], field: 'characterName' },
+  { keys: ['role', 'archetype', 'type', 'function', 'position', 'job', 'occupation'], field: 'role' },
   { keys: ['physical description', 'appearance', 'physical', 'description', 'character description', 'subject', 'looks', 'physical traits'], field: 'subjectDescription' },
   { keys: ['wardrobe', 'costume', 'clothing', 'outfit', 'attire', 'wears', 'dress'], field: 'wardrobe' },
   { keys: ['mood', 'personality', 'core mood', 'character traits', 'temperament', 'nature', 'emotional state', 'traits'], field: 'mood' },
@@ -99,6 +110,8 @@ async function readPdfAsBase64(file: File): Promise<string> {
 // ── Preview field labels ──────────────────────────────────────────────────────
 
 const PREVIEW_FIELDS: Array<{ key: keyof ParsedFields; label: string }> = [
+  { key: 'characterName', label: 'Character Name' },
+  { key: 'role', label: 'Role' },
   { key: 'subjectDescription', label: 'Subject Description' },
   { key: 'wardrobe', label: 'Wardrobe' },
   { key: 'mood', label: 'Mood' },
